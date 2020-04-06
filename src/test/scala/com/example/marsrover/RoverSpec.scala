@@ -6,109 +6,48 @@ import com.example.marsrover.Direction.{East, North, South, West}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.Assertion
+import eu.timepit.refined.auto._
 
 class RoverSpec extends AnyFreeSpec with Matchers with EitherValues {
   "a rover when moving forward" - {
     def testMoveForward(
-        xBefore: Int,
-        yBefore: Int,
+        coordinatesBefore: Coordinates,
         direction: Direction,
-        xAfter: Int,
-        yAfter: Int
+        expectedCoordinatesAfter: Coordinates
     ): Assertion = {
-      val rover = Rover(
-        gridWidth = 3,
-        gridHeight = 3,
-        x = xBefore,
-        y = yBefore,
-        direction = direction
-      ).value
+      val rover = Rover(Grid(3, 3), coordinatesBefore, direction).value
       val result = rover.moveForward
       result should ===(
-        Rover(
-          gridWidth = 3,
-          gridHeight = 3,
-          x = xAfter,
-          y = yAfter,
-          direction = direction
-        ).value
+        Rover(Grid(3, 3), expectedCoordinatesAfter, direction).value
       )
     }
 
     "should change its position in the expected way when not crossing the edge of the map" - {
       "when facing north" in
-        testMoveForward(
-          xBefore = 1,
-          yBefore = 1,
-          direction = North,
-          xAfter = 1,
-          yAfter = 0
-        )
+        testMoveForward(Coordinates(1, 1), North, Coordinates(1, 0))
 
       "when facing east" in
-        testMoveForward(
-          xBefore = 1,
-          yBefore = 1,
-          direction = East,
-          xAfter = 2,
-          yAfter = 1
-        )
+        testMoveForward(Coordinates(1, 1), East, Coordinates(2, 1))
 
       "when facing south" in
-        testMoveForward(
-          xBefore = 1,
-          yBefore = 1,
-          direction = South,
-          xAfter = 1,
-          yAfter = 2
-        )
+        testMoveForward(Coordinates(1, 1), South, Coordinates(1, 2))
 
       "when facing west" in
-        testMoveForward(
-          xBefore = 1,
-          yBefore = 1,
-          direction = West,
-          xAfter = 0,
-          yAfter = 1
-        )
+        testMoveForward(Coordinates(1, 1), West, Coordinates(0, 1))
     }
 
     "should wrap around when crossing the edge of the map" - {
       "when moving north" in
-        testMoveForward(
-          xBefore = 1,
-          yBefore = 0,
-          direction = North,
-          xAfter = 1,
-          yAfter = 2
-        )
+        testMoveForward(Coordinates(1, 0), North, Coordinates(1, 2))
 
       "when moving east" in
-        testMoveForward(
-          xBefore = 2,
-          yBefore = 1,
-          direction = East,
-          xAfter = 0,
-          yAfter = 1
-        )
+        testMoveForward(Coordinates(2, 1), East, Coordinates(0, 1))
 
       "when moving south" in
-        testMoveForward(
-          xBefore = 1,
-          yBefore = 2,
-          direction = South,
-          xAfter = 1,
-          yAfter = 0
-        )
+        testMoveForward(Coordinates(1, 2), South, Coordinates(1, 0))
 
       "when moving west" in
-        testMoveForward(
-          xBefore = 0,
-          yBefore = 1,
-          direction = West,
-          xAfter = 2,
-          yAfter = 1
-        )
+        testMoveForward(Coordinates(0, 1), West, Coordinates(2, 1))
     }
   }
 
@@ -117,22 +56,10 @@ class RoverSpec extends AnyFreeSpec with Matchers with EitherValues {
         directionBefore: Direction,
         directionAfter: Direction
     ): Assertion = {
-      val rover = Rover(
-        gridWidth = 3,
-        gridHeight = 3,
-        x = 1,
-        y = 1,
-        direction = directionBefore
-      ).value
+      val rover = Rover(Grid(3, 3), Coordinates(1, 1), directionBefore).value
       val result = rover.rotateRight
       result should ===(
-        Rover(
-          gridWidth = 3,
-          gridHeight = 3,
-          x = 1,
-          y = 1,
-          direction = directionAfter
-        ).value
+        Rover(Grid(3, 3), Coordinates(1, 1), directionAfter).value
       )
     }
 
@@ -147,22 +74,10 @@ class RoverSpec extends AnyFreeSpec with Matchers with EitherValues {
         directionBefore: Direction,
         directionAfter: Direction
     ): Assertion = {
-      val rover = Rover(
-        gridWidth = 3,
-        gridHeight = 3,
-        x = 1,
-        y = 1,
-        direction = directionBefore
-      ).value
+      val rover = Rover(Grid(3, 3), Coordinates(1, 1), directionBefore).value
       val result = rover.rotateLeft
       result should ===(
-        Rover(
-          gridWidth = 3,
-          gridHeight = 3,
-          x = 1,
-          y = 1,
-          direction = directionAfter
-        ).value
+        Rover(Grid(3, 3), Coordinates(1, 1), directionAfter).value
       )
     }
 
@@ -173,18 +88,12 @@ class RoverSpec extends AnyFreeSpec with Matchers with EitherValues {
   }
 
   "a rover when following a sequence of commands should change position in the expected way" in {
-    val rover = Rover(
-      gridWidth = 5,
-      gridHeight = 5,
-      x = 1,
-      y = 1,
-      direction = North
-    ).value
+    val rover = Rover(Grid(5, 5), Coordinates(1, 1), direction = North).value
 
     val result = rover.followCommands(
       List(MoveForward, RotateLeft, MoveForward, MoveForward)
     )
 
-    result should ===(Rover(5, 5, 4, 0, West).value)
+    result should ===(Rover(Grid(5, 5), Coordinates(4, 0), West).value)
   }
 }
