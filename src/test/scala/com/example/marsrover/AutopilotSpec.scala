@@ -20,7 +20,7 @@ class AutopilotSpec
       val rover = Rover(Grid(10, 10), Coordinates(2, 3), North).value
       val destination = Coordinates(6, 5)
       val route = Autopilot.findShortestRoute(rover, destination).value
-      route.count(_ == MoveForward) should ===(8)
+      route.count(_ == MoveForward) should ===(6)
     }
 
     "should find the shortest route when this involves crossing one edge of the map" in {
@@ -46,7 +46,9 @@ class AutopilotSpec
       } yield TestCase(rover, destination)
 
       forAll(testCaseGen) { testCase =>
-        val route = Autopilot.findShortestRoute(testCase.rover, testCase.destination).value
+        val route = Autopilot
+          .findShortestRoute(testCase.rover, testCase.destination)
+          .value
         val resultOfFollowingRoute = testCase.rover.followCommands(route)
         resultOfFollowingRoute.coordinates should ===(testCase.destination)
       }

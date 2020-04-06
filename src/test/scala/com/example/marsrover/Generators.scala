@@ -3,16 +3,20 @@ package com.example.marsrover
 import cats.scalatest.EitherValues
 
 import com.example.marsrover.Direction.{East, North, South, West}
-import org.scalacheck.{Arbitrary, Gen}
-import eu.timepit.refined.scalacheck.all._
-import eu.timepit.refined.types.numeric.PosInt
+import eu.timepit.refined.api.{Refined, RefType}
 import eu.timepit.refined.auto._
+import eu.timepit.refined.numeric.Positive
+import org.scalacheck.Gen
 
 object Generators extends EitherValues {
   val grid: Gen[Grid] =
     for {
-      width <- Arbitrary.arbitrary[PosInt]
-      height <- Arbitrary.arbitrary[PosInt]
+      width <- Gen
+        .choose(1, 100)
+        .map(RefType[Refined].unsafeWrap[Int, Positive])
+      height <- Gen
+        .choose(1, 100)
+        .map(RefType[Refined].unsafeWrap[Int, Positive])
     } yield Grid(width, height)
 
   def coordinatesInGrid(grid: Grid): Gen[Coordinates] =
