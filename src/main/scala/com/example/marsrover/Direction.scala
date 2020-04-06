@@ -1,8 +1,11 @@
-package com.example.marsrover.model
+package com.example.marsrover
 
-import com.example.marsrover.model.Direction.{ East, North, South, West }
-import eu.timepit.refined.types.numeric.PosInt
+import com.example.marsrover.Direction.{ East, North, South, West }
 
+/*
+ Represents a compass direction. `dx` and `dy` are the offsets from moving one
+ grid square in that direction, respectively along the x-axis (east) and y-axis (south).
+ */
 sealed abstract class Direction(val dx: Int, val dy: Int) {
   def rotateLeft: Direction = this match {
     case North => West
@@ -25,7 +28,3 @@ object Direction {
   case object South extends Direction(0, 1)
   case object West extends Direction(-1, 0)
 }
-
-final case class World(width: PosInt, height: PosInt)
-
-final case class Position(x: Int, y: Int, direction: Direction)
