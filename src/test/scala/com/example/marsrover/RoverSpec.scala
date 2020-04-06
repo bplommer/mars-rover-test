@@ -171,4 +171,20 @@ class RoverSpec extends AnyFreeSpec with Matchers with EitherValues {
     "when facing South" in testRotateLeft(South, East)
     "when facing East" in testRotateLeft(East, North)
   }
+
+  "a rover when following a sequence of commands should change position in the expected way" in {
+    val rover = Rover(
+      gridWidth = 5,
+      gridHeight = 5,
+      x = 1,
+      y = 1,
+      direction = North
+    ).value
+
+    val result = rover.followCommands(
+      List(MoveForward, RotateLeft, MoveForward, MoveForward)
+    )
+
+    result should ===(Rover(5, 5, 4, 0, West).value)
+  }
 }

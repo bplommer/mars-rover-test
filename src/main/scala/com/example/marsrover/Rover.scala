@@ -12,6 +12,14 @@ sealed trait Rover {
   def moveForward: Rover
   def rotateLeft: Rover
   def rotateRight: Rover
+
+  final def followCommand(command: Command): Rover = command match {
+    case MoveForward => moveForward
+    case RotateLeft => rotateLeft
+    case RotateRight => rotateRight
+  }
+
+  final def followCommands(commands: List[Command]): Rover = commands.foldLeft(this)(_.followCommand(_))
 }
 object Rover {
 
