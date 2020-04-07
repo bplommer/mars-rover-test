@@ -1,6 +1,6 @@
 package com.example.marsrover
 
-import com.example.marsrover.Direction.{ East, North, South, West }
+import com.example.marsrover.Direction.{East, North, South, West}
 
 /*
  Represents a compass direction. `dx` and `dy` are the offsets from moving one

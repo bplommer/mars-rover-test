@@ -42,6 +42,10 @@ object Autopilot {
       )
     }
 
+  /*
+  Converts a path, expressed as a series of consecutive movements in the given directions, to a set of commands for
+  a rover in order to follow that path
+   */
   def moveCommands(
       initialDirection: Direction,
       movements: List[Direction]
@@ -64,6 +68,9 @@ object Autopilot {
     loop(initialDirection, movements, Chain.empty)
   }
 
+  /*
+   Commands for a rover to rotate from `from` to `to`
+   */
   private def rotateCommands(from: Direction, to: Direction): Chain[Command] =
     if (from == to) Chain.empty
     else if (to.dy == -from.dx && to.dx == from.dy) Chain(RotateLeft)
